@@ -126,6 +126,12 @@ class ComicController extends Controller
     public function destroy($id)
     {
         Comic::destroy($id);
+
+        $response = [
+            'message' => 'Episode successfully deleted'
+        ];
+
+        return response($response, 200);
     }
     /**
      * Search for a title
