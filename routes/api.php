@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComicController;
 use App\Http\Controllers\EpisodeController;
+use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +43,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/episode/{id}', [EpisodeController::class, 'index']);
     Route::put('/episode/{id}', [EpisodeController::class, 'update']);
     Route::delete('/episode/{id}', [EpisodeController::class, 'destroy']);
+    Route::get('/episode-id/{id}', [EpisodeController::class, 'show']);
+
+    Route::post('/image/{id}', [ImageController::class, 'store']);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
