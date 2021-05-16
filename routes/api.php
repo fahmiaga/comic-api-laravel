@@ -46,6 +46,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/episode-id/{id}', [EpisodeController::class, 'show']);
 
     Route::post('/image/{id}', [ImageController::class, 'store']);
+    Route::get('/image/{id}', [ImageController::class, 'index']);
+    Route::post('/update-image/{id}', [ImageController::class, 'update']);
+    Route::post('/delete-image/{id}', [ImageController::class, 'destroy']);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

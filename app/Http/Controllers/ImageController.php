@@ -14,9 +14,21 @@ class ImageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        //
+        $images = Image::where('id_episode', $id)->get();
+        $imagesData = [];
+        foreach ($images as $image) {
+            array_push($imagesData, $image->image);
+        }
+
+        $response = [
+            'message' => 'success',
+            'id_episode' => (int)$id,
+            'images' => $imagesData
+        ];
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -46,9 +58,6 @@ class ImageController extends Controller
                 'id_episode' => $id
             ]);
         }
-        // $image = new Image();
-        // $image->filenames = $images;
-        // $image->save();
 
         $response = [
             'message' => 'Images successfully added',
@@ -63,9 +72,8 @@ class ImageController extends Controller
      * @param  \App\Models\Image  $image
      * @return \Illuminate\Http\Response
      */
-    public function show(Image $image)
+    public function show($id)
     {
-        //
     }
 
     /**
@@ -75,9 +83,29 @@ class ImageController extends Controller
      * @param  \App\Models\Image  $image
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Image $image)
+    public function update(Request $request, $id)
     {
-        //
+        $image = Image::find($id);
+        $episode = Episode::where('id_episode', $id)->first();
+        $nameEps = Str::of($episode->name)->slug('-');
+
+        $name = $episode->slug . '-' . $nameEps . '-' . time() . rand(1, 100) . '.' . $request->image->extension();
+
+        $request->image->move(public_path('images/comic-images'), $name);
+
+        $currentImage = $image->image;
+        $filePath = public_path('images/comic-images/' . $currentImage);
+        unlink($filePath);
+
+        $image->update([
+            'image' => $name
+        ]);
+
+        $response = [
+            'message' => 'Image successfully updated'
+        ];
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -86,8 +114,19 @@ class ImageController extends Controller
      * @param  \App\Models\Image  $image
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Image $image)
+    public function destroy($id)
     {
-        //
+        $image = Image::find($id);
+
+        $currentImage = $image->image;
+        $filePath = public_path('images/comic-images/' . $currentImage);
+        unlink($filePath);
+        Image::destroy($id);
+
+        $response = [
+            'message' => 'Image succesfully deleted'
+        ];
+
+        return response()->json($response, 200);
     }
 }
