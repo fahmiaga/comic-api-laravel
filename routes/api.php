@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComicController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EpisodeController;
 use App\Http\Controllers\ImageController;
 use Illuminate\Http\Request;
@@ -38,6 +39,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user/{id}', [AuthController::class, 'show']);
 
     Route::post('/episode/{id}', [EpisodeController::class, 'store']);
     Route::get('/episode/{id}', [EpisodeController::class, 'index']);
@@ -49,6 +51,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/image/{id}', [ImageController::class, 'index']);
     Route::post('/update-image/{id}', [ImageController::class, 'update']);
     Route::post('/delete-image/{id}', [ImageController::class, 'destroy']);
+
+    Route::post('/comment/{id}', [CommentController::class, 'store']);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
