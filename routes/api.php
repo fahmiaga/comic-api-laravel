@@ -53,6 +53,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/delete-image/{id}', [ImageController::class, 'destroy']);
 
     Route::post('/comment/{id}', [CommentController::class, 'store']);
+    Route::get('/comment/{id}', [CommentController::class, 'index']);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

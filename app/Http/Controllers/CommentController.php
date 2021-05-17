@@ -13,9 +13,15 @@ class CommentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($id)
     {
-        //
+        $comment = Comment::where('id_episode', $id)->get();
+
+        $response = [
+            'message' => 'success',
+            'data' => $comment
+        ];
+        return response()->json($response, 200);
     }
 
     /**
