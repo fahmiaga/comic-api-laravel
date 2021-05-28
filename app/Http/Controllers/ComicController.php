@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comic;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -20,9 +21,10 @@ class ComicController extends Controller
         $comic = Comic::all();
         $response = [
             'message' => 'success',
+            'status' => 200,
             'data' => $comic,
         ];
-        return response()->json($response, Response::HTTP_OK);
+        return response()->json($response, 200);
     }
 
     /**
@@ -35,29 +37,44 @@ class ComicController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'synopsis' => 'required'
+            'synopsis' => 'required',
+            'comic_image' => 'required',
+            'drop_image' => 'required'
         ]);
 
         $slug = Str::of($request->title)->slug('-');
 
-        $fileName = time() . '.' . $request->comic_image->extension();
+        $comic_image = $request->file('comic_image');
+        $comic_img_link = Cloudinary::upload($comic_image->getRealPath())->getSecurePath();
 
-        $request->file('comic_image')->storeAs('public', $fileName);
+        $comic_image_name = Cloudinary::getPublicId();
+
+        $drop_image = $request->file('drop_image');
+
+        $drop_img_link = Cloudinary::upload($drop_image->getRealPath())->getSecurePath();
+
+        $drop_image_name = Cloudinary::getPublicId();
+
         try {
             $comic = Comic::create([
                 'title' => $request->title,
                 'synopsis' => $request->synopsis,
                 'slug' => $slug,
-                'comic_image' => $fileName
+                'comic_image' => $comic_img_link,
+                'comic_name' => $comic_image_name,
+                'drop_image' => $drop_img_link,
+                'drop_name' => $drop_image_name,
+                'rating' => 0
             ]);
             $response = [
                 'message' => 'Comic added ',
-                'data' => $comic
+                'status' => 201,
+                'data' => $comic,
             ];
             return response()->json($response, Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'failed' . $e->errorInfo
+                'message' => 'failed' . $e->getMessage()
             ]);
         }
     }
@@ -73,9 +90,10 @@ class ComicController extends Controller
         $comic = Comic::find($id);
         $response = [
             'message' => 'success ',
+            'status' => 200,
             'data' => $comic
         ];
-        return response()->json($response, Response::HTTP_OK);
+        return response()->json($response, 200);
     }
 
     /**
@@ -87,29 +105,48 @@ class ComicController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'title' => 'required',
+            'synopsis' => 'required',
+            'comic_image' => 'required',
+            'drop_image' => 'required'
+        ]);
+
+        $comic_id = Comic::find($id);
+
+        $slug = Str::of($request->title)->slug('-');
+
+        Cloudinary::destroy($comic_id->comic_name);
+        Cloudinary::destroy($comic_id->drop_name);
+
+        $comic_image = $request->file('comic_image');
+        $comic_img_link = Cloudinary::upload($comic_image->getRealPath())->getSecurePath();
+
+        $comic_image_name = Cloudinary::getPublicId();
+
+        $drop_image = $request->file('drop_image');
+
+        $drop_img_link = Cloudinary::upload($drop_image->getRealPath())->getSecurePath();
+
+        $drop_image_name = Cloudinary::getPublicId();
 
         try {
-
-            $fileName = time() . '.' . $request->comic_image->extension();
-            $request->file('comic_image')->move('storage', $fileName);
-            $slug = Str::of($request->title)->slug('-');
-            $comic = Comic::find($id);
-
-            $comicImg = $comic->comic_image;
-            $filePath = public_path('storage/' . $comicImg);
-            unlink($filePath);
-            $comic->update([
+            $comic = $comic_id->update([
                 'title' => $request->title,
                 'synopsis' => $request->synopsis,
                 'slug' => $slug,
-                'comic_image' => $fileName
-
+                'comic_image' => $comic_img_link,
+                'comic_name' => $comic_image_name,
+                'drop_image' => $drop_img_link,
+                'drop_name' => $drop_image_name,
+                'rating' => 0
             ]);
             $response = [
                 'message' => 'Comic successfully updated ',
-                'data' => $comic
+                'status' => 200,
+                'data' => $comic,
             ];
-            return response()->json($response, Response::HTTP_OK);
+            return response()->json($response, 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'failed' . $e->getMessage()
@@ -125,10 +162,16 @@ class ComicController extends Controller
      */
     public function destroy($id)
     {
+
+        $comic = Comic::find($id);
+
+        Cloudinary::destroy($comic->comic_name);
+        Cloudinary::destroy($comic->drop_name);
         Comic::destroy($id);
 
         $response = [
-            'message' => 'Episode successfully deleted'
+            'message' => 'Episode successfully deleted',
+            'status' => 200
         ];
 
         return response($response, 200);
@@ -144,8 +187,9 @@ class ComicController extends Controller
         $comic = Comic::where('title', 'like', '%' . $title . '%')->get();
         $response = [
             'message' => 'success',
+            'status' => 200,
             'data' => $comic
         ];
-        return response()->json($response, Response::HTTP_OK);
+        return response()->json($response, 200);
     }
 }

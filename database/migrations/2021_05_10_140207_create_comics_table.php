@@ -19,6 +19,10 @@ class CreateComicsTable extends Migration
             $table->string('slug');
             $table->string('synopsis');
             $table->string('comic_image')->nullable();
+            $table->string('drop_image')->nullable();
+            $table->string('comic_name')->nullable();
+            $table->string('drop_name')->nullable();
+            $table->integer('rating')->nullable();
             $table->timestamps();
         });
     }
