@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Cloudinary\Cloudinary as CloudinaryCloudinary;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Auth;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -30,6 +31,7 @@ class AuthController extends Controller
 
         $response = [
             'message' => 'Successfully register',
+            'status' => 200,
             'user' => $user,
             'token' => $token,
         ];
@@ -77,6 +79,7 @@ class AuthController extends Controller
 
                 $response = [
                     'message' => 'Successfully login',
+                    'status' => 200,
                     'user' => $user,
                     'token' => $token,
                 ];
@@ -98,27 +101,31 @@ class AuthController extends Controller
     {
         $user = User::find($request->user()->id);
 
-        $fileName = time() . '.' . $request->profile_image->extension();
+        $old_image = $user->image_name;
 
-        $request->file('profile_image')->move('storage/profileImg', $fileName);
-
-        if ($user->profile_image != 'default.jpg') {
-            $userImg = $user->profile_image;
-            $filePath = public_path('storage/profileImg/' . $userImg);
-            unlink($filePath);
+        if ($old_image != null) {
+            Cloudinary::destroy($old_image);
         }
+
+        $images = $request->file('profile_image');
+
+        $img_link = Cloudinary::upload($images->getRealPath())->getSecurePath();
+
+        $img_name = Cloudinary::getPublicId();
 
         $user->update([
             'name' => $request->name,
-            'profile_image' => $fileName
+            'profile_image' => $img_link,
+            'image_name' => $img_name
         ]);
 
         $response = [
             'message' => 'Profile successfully updated',
+            'status' => 200,
             'data' => $user
         ];
 
-        return response($response, 200);
+        return response()->json($response, 200);
     }
 
     public function show($id)
@@ -127,6 +134,7 @@ class AuthController extends Controller
 
         $response = [
             'message' => 'success',
+            'status' => 200,
             'data' => $user
         ];
         return  response()->json($response, 200);
