@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Episode;
 use App\Models\Image;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -44,23 +45,38 @@ class ImageController extends Controller
                 'message' => 'image not found'
             ], 404);
         }
-        $images = [];
 
-        $episode = Episode::where('id_episode', $id)->first();
-        $nameEps = Str::of($episode->name)->slug('-');
-        foreach ($request->file('image') as $image) {
-            $name = $episode->slug . '-' . $nameEps . '-' . time() . rand(1, 100) . '.' . $image->extension();
-            $image->move(public_path('images/comic-images'), $name);
-            $images[] = $name;
+        $images = $request->file('image');
 
-            Image::create([
-                'image' => $name,
-                'id_episode' => $id
+        foreach ($images as $image) {
+            $img_link = Cloudinary::upload($image->getRealPath())->getSecurePath();
+            $img_name = Cloudinary::getPublicId();
+
+            $data = Image::create([
+                'image' => $img_link,
+                'id_episode' => $id,
+                'image_name' => $img_name
             ]);
         }
 
+        // $images = [];
+
+        // $episode = Episode::where('id_episode', $id)->first();
+        // $nameEps = Str::of($episode->name)->slug('-');
+        // foreach ($request->file('image') as $image) {
+        //     $name = $episode->slug . '-' . $nameEps . '-' . time() . rand(1, 100) . '.' . $image->extension();
+        //     $image->move(public_path('images/comic-images'), $name);
+        //     $images[] = $name;
+
+        //     Image::create([
+        //         'image' => $name,
+        //         'id_episode' => $id
+        //     ]);
+        // }
+
         $response = [
             'message' => 'Images successfully added',
+            'status' => 201,
         ];
 
         return response()->json($response, 201);
@@ -86,23 +102,34 @@ class ImageController extends Controller
     public function update(Request $request, $id)
     {
         $image = Image::find($id);
-        $episode = Episode::where('id_episode', $id)->first();
-        $nameEps = Str::of($episode->name)->slug('-');
 
-        $name = $episode->slug . '-' . $nameEps . '-' . time() . rand(1, 100) . '.' . $request->image->extension();
+        Cloudinary::destroy($image->image_name);
 
-        $request->image->move(public_path('images/comic-images'), $name);
+        // $episode = Episode::where('id_episode', $id)->first();
 
-        $currentImage = $image->image;
-        $filePath = public_path('images/comic-images/' . $currentImage);
-        unlink($filePath);
+        // $nameEps = Str::of($episode->name)->slug('-');
+
+        // $name = $episode->slug . '-' . $nameEps . '-' . time() . rand(1, 100) . '.' . $request->image->extension();
+
+        // $request->image->move(public_path('images/comic-images'), $name);
+
+        // $currentImage = $image->image;
+        // $filePath = public_path('images/comic-images/' . $currentImage);
+        // unlink($filePath);
+
+        $images = $request->file('image');
+
+        $img_link = Cloudinary::upload($images->getRealPath())->getSecurePath();
+        $img_name = Cloudinary::getPublicId();
 
         $image->update([
-            'image' => $name
+            'image' => $img_link,
+            'image_name' => $img_name
         ]);
 
         $response = [
-            'message' => 'Image successfully updated'
+            'message' => 'Image successfully updated',
+            'status' => 201
         ];
 
         return response()->json($response, 200);
@@ -118,13 +145,16 @@ class ImageController extends Controller
     {
         $image = Image::find($id);
 
-        $currentImage = $image->image;
-        $filePath = public_path('images/comic-images/' . $currentImage);
-        unlink($filePath);
-        Image::destroy($id);
+        // $currentImage = $image->image;
+        // $filePath = public_path('images/comic-images/' . $currentImage);
+        // unlink($filePath);
 
+        Cloudinary::destroy($image->image_name);
+
+        Image::destroy($id);
         $response = [
-            'message' => 'Image succesfully deleted'
+            'message' => 'Image succesfully deleted',
+            'status' => 200
         ];
 
         return response()->json($response, 200);

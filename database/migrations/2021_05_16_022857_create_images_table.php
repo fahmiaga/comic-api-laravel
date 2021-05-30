@@ -17,6 +17,7 @@ class CreateImagesTable extends Migration
             $table->id();
             $table->integer('id_episode');
             $table->string('image');
+            $table->string('image_name');
             $table->timestamps();
         });
     }
