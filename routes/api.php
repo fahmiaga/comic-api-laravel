@@ -5,6 +5,7 @@ use App\Http\Controllers\ComicController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EpisodeController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\RatingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,6 +55,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/comment/{id}', [CommentController::class, 'store']);
     Route::get('/comment/{id}', [CommentController::class, 'index']);
+
+    Route::post('/rate/{id}', [RatingController::class, 'store']);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

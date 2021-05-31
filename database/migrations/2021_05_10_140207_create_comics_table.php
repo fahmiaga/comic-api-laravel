@@ -22,7 +22,7 @@ class CreateComicsTable extends Migration
             $table->string('drop_image')->nullable();
             $table->string('comic_name')->nullable();
             $table->string('drop_name')->nullable();
-            $table->integer('rating')->nullable();
+            $table->string('rating')->nullable();
             $table->timestamps();
         });
     }
