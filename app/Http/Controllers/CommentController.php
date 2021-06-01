@@ -15,7 +15,11 @@ class CommentController extends Controller
      */
     public function index($id)
     {
-        $comment = Comment::where('id_episode', $id)->get();
+        // $comment = Comment::where('id_episode', $id)->get();
+
+        $comment = Comment::join('users', 'users.id', '=', 'comments.id_user')
+            ->where('id_episode', $id)
+            ->get(['users.name', 'users.profile_image', 'comments.comment']);
 
         $response = [
             'message' => 'success',
