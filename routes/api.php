@@ -6,6 +6,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EpisodeController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ScheduleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/comment/{id}', [CommentController::class, 'index']);
 
     Route::post('/rate/{id}', [RatingController::class, 'store']);
+
+    Route::post('/schedule/{id}', [ScheduleController::class, 'store']);
+    Route::get('/schedule/{id}', [ScheduleController::class, 'index']);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
