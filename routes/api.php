@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComicController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\EpisodeController;
+use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ScheduleController;
@@ -38,6 +39,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('comics', ComicController::class);
     Route::post('/comics/{id}', [ComicController::class, 'update']);
     Route::get('/comics/search/{title}', [ComicController::class, 'search']);
+    Route::get('/comics/get-comics-genre/{genre}', [ComicController::class, 'getComicByGenre']);
 
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -61,6 +63,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/schedule/{id}', [ScheduleController::class, 'store']);
     Route::get('/schedule/{id}', [ScheduleController::class, 'index']);
+
+    Route::resource('genre', GenreController::class);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

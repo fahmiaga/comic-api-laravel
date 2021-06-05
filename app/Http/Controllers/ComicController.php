@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comic;
+use App\Models\Comic_genre;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
@@ -60,12 +61,22 @@ class ComicController extends Controller
                 'title' => $request->title,
                 'synopsis' => $request->synopsis,
                 'slug' => $slug,
+                'genre' => $request->genre,
                 'comic_image' => $comic_img_link,
                 'comic_name' => $comic_image_name,
                 'drop_image' => $drop_img_link,
                 'drop_name' => $drop_image_name,
                 'rating' => 0
             ]);
+
+
+            // foreach ($request->id_genre as  $genre) {
+            //     Comic_genre::create([
+            //         'id_genre' => $genre,
+            //         'id_comic' => $comic->id,
+            //     ]);
+            // }
+
             $response = [
                 'message' => 'Comic added ',
                 'status' => 201,
@@ -135,6 +146,7 @@ class ComicController extends Controller
                 'title' => $request->title,
                 'synopsis' => $request->synopsis,
                 'slug' => $slug,
+                'genre' => $request->genre,
                 'comic_image' => $comic_img_link,
                 'comic_name' => $comic_image_name,
                 'drop_image' => $drop_img_link,
@@ -185,6 +197,24 @@ class ComicController extends Controller
     public function search($title)
     {
         $comic = Comic::where('title', 'like', '%' . $title . '%')->get();
+        $response = [
+            'message' => 'success',
+            'status' => 200,
+            'data' => $comic
+        ];
+        return response()->json($response, 200);
+    }
+
+    /**
+     * Search for a genre
+     *
+     * @param  str  $genre
+     * @return \Illuminate\Http\Response
+     */
+    public function getComicByGenre($genre)
+    {
+
+        $comic = Comic::where('genre', $genre)->get();
         $response = [
             'message' => 'success',
             'status' => 200,

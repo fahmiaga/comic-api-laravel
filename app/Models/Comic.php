@@ -9,5 +9,5 @@ class Comic extends Model
 {
     use HasFactory;
     protected $table = 'comics';
-    protected $fillable = ['title', 'slug', 'synopsis', 'comic_image', 'drop_image', 'comic_name', 'drop_name', 'rating'];
+    protected $fillable = ['title', 'slug', 'synopsis', 'comic_image', 'drop_image', 'comic_name', 'drop_name', 'rating', 'genre'];
 }
