@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComicController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DayController;
 use App\Http\Controllers\EpisodeController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\ImageController;
@@ -54,7 +55,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/image/{id}', [ImageController::class, 'store']);
     Route::get('/image/{id}', [ImageController::class, 'index']);
     Route::post('/update-image/{id}', [ImageController::class, 'update']);
-    Route::post('/delete-image/{id}', [ImageController::class, 'destroy']);
+    Route::delete('/delete-image/{id}', [ImageController::class, 'destroy']);
 
     Route::post('/comment/{id}', [CommentController::class, 'store']);
     Route::get('/comment/{id}', [CommentController::class, 'index']);
@@ -65,6 +66,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/schedule/{id}', [ScheduleController::class, 'index']);
 
     Route::resource('genre', GenreController::class);
+
+    Route::get('/days', [DayController::class, 'index']);
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

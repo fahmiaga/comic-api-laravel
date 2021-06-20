@@ -46,6 +46,7 @@ class EpisodeController extends Controller
 
         $episode = Episode::create([
             'name' => $request->name,
+            'slug' => $id_check->slug,
             'id_comic' => $id
         ]);
         $response = [

@@ -18,15 +18,18 @@ class ImageController extends Controller
     public function index($id)
     {
         $images = Image::where('id_episode', $id)->get();
-        $imagesData = [];
-        foreach ($images as $image) {
-            array_push($imagesData, $image->image);
-        }
+
+        // dd($images);
+
+        // $imagesData = [];
+        // foreach ($images as $image) {
+        //     array_push($imagesData, $image->image);
+        // }
 
         $response = [
             'message' => 'success',
             'id_episode' => (int)$id,
-            'images' => $imagesData
+            'images' => $images
         ];
 
         return response()->json($response, 200);
@@ -129,7 +132,7 @@ class ImageController extends Controller
 
         $response = [
             'message' => 'Image successfully updated',
-            'status' => 201
+            'status' => 200
         ];
 
         return response()->json($response, 200);
@@ -144,7 +147,6 @@ class ImageController extends Controller
     public function destroy($id)
     {
         $image = Image::find($id);
-
         // $currentImage = $image->image;
         // $filePath = public_path('images/comic-images/' . $currentImage);
         // unlink($filePath);

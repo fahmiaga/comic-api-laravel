@@ -2,26 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Schedule;
+use App\Models\Day;
 use Illuminate\Http\Request;
 
-class ScheduleController extends Controller
+class DayController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id)
+    public function index()
     {
-        $schedule = Schedule::join('comics', 'comics.id', '=', 'schedules.id_comic')
-            ->where('id_day', $id)
-            ->get(['comics.title', 'comics.genre', 'schedules.id']);
+        $days = Day::all();
 
         $response = [
-            'message' => 'success',
-            'status' => 200,
-            'data' => $schedule
+            'message' => 'Success',
+            'data' => $days,
+            'status' => 200
         ];
 
         return response()->json($response, 200);
@@ -33,19 +31,8 @@ class ScheduleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $id)
+    public function store(Request $request)
     {
-        Schedule::create([
-            'id_comic' => $request->id_comic,
-            'id_day' => $id
-        ]);
-
-        $response = [
-            'message' => 'Schedule successfully added',
-            'status' => 201
-        ];
-
-        return response()->json($response, 201);
     }
 
     /**

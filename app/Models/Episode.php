@@ -11,6 +11,7 @@ class Episode extends Model
     protected $table = 'episodes';
     protected $fillable = [
         'name',
-        'id_comic'
+        'id_comic',
+        'slug'
     ];
 }
