@@ -35,6 +35,30 @@ class ScheduleController extends Controller
      */
     public function store(Request $request, $id)
     {
+        $schedule = Schedule::join('comics', 'comics.id', '=', 'schedules.id_comic')
+            ->where('id_day', $id)
+            // ->where('id_comic', '=', $request->id_comic)
+            ->select('id_comic')
+            ->where('id_comic', $request->id_comic)
+            ->first();
+
+        // dd($schedule);
+
+        // if ($schedule !== null) {
+        //     dd('availabe');
+        // } else {
+        //     dd('not available');
+        // }
+
+        if ($schedule !== null) {
+            $response = [
+                'message' => 'Comic already exist',
+                'status' => 406
+            ];
+
+            return response()->json($response, 406);
+        }
+
         Schedule::create([
             'id_comic' => $request->id_comic,
             'id_day' => $id
@@ -79,6 +103,13 @@ class ScheduleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Schedule::destroy($id);
+
+        $response = [
+            'message' => 'Schedule successfully deleted',
+            'status' => 200
+        ];
+
+        return response()->json($response, 200);
     }
 }

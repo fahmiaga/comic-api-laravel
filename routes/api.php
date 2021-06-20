@@ -64,6 +64,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/schedule/{id}', [ScheduleController::class, 'store']);
     Route::get('/schedule/{id}', [ScheduleController::class, 'index']);
+    Route::delete('/schedule/{id}', [ScheduleController::class, 'destroy']);
 
     Route::resource('genre', GenreController::class);
 
