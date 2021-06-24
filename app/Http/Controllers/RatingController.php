@@ -32,10 +32,14 @@ class RatingController extends Controller
         ]);
         $user_id = $request->user()->id;
 
-        $user = Rate::where('user_id', $user_id)->first();
+        $user = Rate::where('comic_id', $id)
+            ->where('user_id', $user_id)
+            ->first();
+
+        // dd($user);
 
 
-        if ($user) {
+        if ($user !== null) {
             $response = [
                 'message' => 'User already gived a rate',
                 'status' => 405

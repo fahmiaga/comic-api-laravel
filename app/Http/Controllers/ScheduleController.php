@@ -16,7 +16,7 @@ class ScheduleController extends Controller
     {
         $schedule = Schedule::join('comics', 'comics.id', '=', 'schedules.id_comic')
             ->where('id_day', $id)
-            ->get(['comics.title', 'comics.genre', 'schedules.id']);
+            ->get(['comics.*', 'schedules.id_schedule']);
 
         $response = [
             'message' => 'success',
@@ -103,7 +103,7 @@ class ScheduleController extends Controller
      */
     public function destroy($id)
     {
-        Schedule::destroy($id);
+        Schedule::where('id_schedule', $id)->delete();
 
         $response = [
             'message' => 'Schedule successfully deleted',
