@@ -19,11 +19,12 @@ class CommentController extends Controller
 
         $comment = Comment::join('users', 'users.id', '=', 'comments.id_user')
             ->where('id_episode', $id)
-            ->get(['users.name', 'users.profile_image', 'comments.comment']);
+            ->get(['users.name', 'users.profile_image', 'comments.comment', 'comments.created_at']);
 
         $response = [
             'message' => 'success',
-            'data' => $comment
+            'data' => $comment,
+            'status' => 200
         ];
         return response()->json($response, 200);
     }
@@ -49,7 +50,8 @@ class CommentController extends Controller
 
         $response = [
             'message' => 'Comment successfully added',
-            'data' => $comment
+            'data' => $comment,
+            'status' => 201
         ];
 
         return response()->json($response, 201);

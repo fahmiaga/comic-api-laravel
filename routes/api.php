@@ -43,7 +43,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/comics/get-comics-genre/{genre}', [ComicController::class, 'getComicByGenre']);
 
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::delete('/logout', [AuthController::class, 'logout']);
     Route::get('/user/{id}', [AuthController::class, 'show']);
 
     Route::post('/episode/{id}', [EpisodeController::class, 'store']);
