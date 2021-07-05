@@ -17,6 +17,7 @@ class CreateEpisodesTable extends Migration
             $table->id('id_episode');
             $table->integer('id_comic');
             $table->string('name');
+            $table->string('slug');
             $table->timestamps();
         });
     }
